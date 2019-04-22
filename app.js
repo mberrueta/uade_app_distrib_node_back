@@ -7,35 +7,73 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
+var http = require('http'),
+    methods = require('methods'),
+    cors = require('cors'),
+    errorhandler = require('errorhandler'),
+    mongoose = require('mongoose');
+
+var isProduction = process.env.NODE_ENV === 'production';
 var app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
+app.use(cors());
+app.use(require('morgan')('dev'));
+app.use(require('method-override')());
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+if (!isProduction) {
+  app.use(errorhandler());
+}
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+if(isProduction){
+  mongoose.connect(process.env.MONGODB_URI);
+} else {
+  mongoose.connect('mongodb://localhost/uade_app_distribuidas');
+  mongoose.set('debug', true);
+}
 
-// catch 404 and forward to error handler
+require('./models/User');
+
+app.use(require('./routes'));
+
+/// catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  next(createError(404));
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
 });
 
-// error handler
+/// error handlers
+
+// development error handler
+// will print stacktrace
+if (!isProduction) {
+  app.use(function(err, req, res, next) {
+    console.log(err.stack);
+
+    res.status(err.status || 500);
+
+    res.json({'errors': {
+      message: err.message,
+      error: err
+    }});
+  });
+}
+
+// production error handler
+// no stacktraces leaked to user
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.json({'errors': {
+    message: err.message,
+    error: {}
+  }});
 });
+
+// finally, let's start our server...
+var server = app.listen( process.env.PORT || 9090, function(){
+  console.log('Listening on port ' + server.address().port);
+});
+
+
 
 module.exports = app;
