@@ -1,5 +1,6 @@
 var express = require('express'),
     router = express.Router(),
+    Auth = require('../helpers/hash'),
     Users = require('../models/users');
 
 // List users
@@ -18,20 +19,22 @@ router.get('/', function(req, res) {
 
 // Create a New User
 router.post('/', function(req, res) {
-  var user = Users({
-    email: req.body.email,
-    digest: req.body.digest,
-    name: req.body.name
-  });
+  Auth.hash(req.body.pass, hash => {
+    var user = Users({
+      email: req.body.email,
+      digest: hash,
+      name: req.body.name
+    });
 
-  user.save()
-         .then(new_user => {
+    user.save()
+        .then(new_user => {
              res.json({user: new_user});
            })
          .catch(err => {
            console.error("Something went wrong",err);
            res.json({message: "Something went wrong", error: err.message});
          });
+    });
 });
 
 // Update a user

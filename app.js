@@ -12,6 +12,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use('/movie-comments', require('./controllers/movie_comments'))
 app.use('/users', require('./controllers/users'))
+app.use('/auth', require('./controllers/auth'))
 mongoose.connect(url_db);
 
 app.get('/', function(req, res) {
