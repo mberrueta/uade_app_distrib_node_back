@@ -4,10 +4,10 @@ var Schema = mongoose.Schema;
 
 var MovieCommentSchema = new Schema({
   id: { type: String, default: uuid.v1},
-  imdb_id: String,
-  user_id: String,
-  comment: String,
-  stars: Number,
+  imdb_id: { type: String, required: true },
+  user_id: { type: String, required: true },
+  comment:  { type: String, trim: true, maxlength: 200 },
+  stars: { type: Number, min: 1, max: 5, default: 1 },
   date: { type: Date, default: Date.now },
 });
 

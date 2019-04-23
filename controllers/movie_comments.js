@@ -3,17 +3,24 @@ var express = require('express'),
     MovieComments = require('../models/movie_comments');
 
 // List comments by movie
-router.get('/', function(req, res) {
+router.get('/:imdb_id', function(req, res) {
   //TODO: use middleware
-  user_id = req.params.user_id;
+  user_id = req.query.user_id;
 
-  //TODO: add my comments at top
-  MovieComments.find({imdbID: req.params.imdb_id})
-               .then(
-                 (comments) => {
-                    res.json({comments: comments})
-                 }
-               )
+  Promise.all([
+    MovieComments.find({imdb_id: req.params.imdb_id, user_id: user_id }).sort('-date'),
+    MovieComments.find({imdb_id: req.params.imdb_id, user_id: {'$ne': user_id }}).sort('-date')
+  ])
+  .then(results => {
+    const [my_comments, all_comments] = results;
+    console.log("my_comments",my_comments);
+    console.log("all_comments",all_comments);
+    res.json({comments: my_comments.concat(all_comments)})
+  })
+  .catch(err=>{
+    console.error("Something went wrong",err);
+    res.json({message: "Something went wrong", error: err});
+  })
 });
 
 // Create a New Movie Rating & Comment
@@ -26,31 +33,31 @@ router.post('/', function(req, res) {
   });
 
   comment.save()
-         .then(
-           (new_comment) => {
+         .then(new_comment => {
              res.json({comment: new_comment});
-           }
-         )
+           })
+         .catch(err => {
+           console.error("Something went wrong",err);
+           res.json({message: "Something went wrong", error: err.message});
+         });
 });
 
 // Update a rating & comment
 router.put('/:id', function(req, res) {
-  let user_id = req.body.user_id; // TODO: middleware
+  let user_id = req.query.user_id; // TODO: middleware
 
-  console.log(req.params.id)
-  MovieComments.findOne({id: req.params.id}, (err, result) => {
-    console.log(result)
+  MovieComments.findOne({id: req.params.id, user_id: user_id}, (err, result) => {
     if(result) {
-      if (result.user_id === user_id) {
-        comment = req.body.comment;
-        stars = req.body.stars;
-        MovieComments.update({id: req.params.id}, {comment: comment, stars: stars}, (err, comment) => {
+        MovieComments.updateOne({id: req.params.id}, {
+          comment: req.body.comment,
+          stars: req.body.stars
+        }).then((err, comment) => {
           res.json({result: 'ok'});
         })
-      }
-      else{
-        res.json({errors: "you are not able to update this rating"});
-      }
+        .catch(err => {
+          console.error("Something went wrong",err);
+          res.json({message: "Something went wrong", error: err.message});
+        });
     }
     else
     {
@@ -61,20 +68,20 @@ router.put('/:id', function(req, res) {
 
 // Delete a rating & comment
 router.delete('/:id', function(req, res) {
-  let user_id = req.body.user_id; // TODO: middleware
+  let user_id = req.query.user_id; // TODO: middleware
 
   console.log(req.params.id)
-  MovieComments.findOne({id: req.params.id}, (err, result) => {
+  MovieComments.findOne({id: req.params.id, user_id: user_id}, (err, result) => {
     console.log(result)
     if(result) {
-      if (result.user_id === user_id) {
-        MovieComments.deleteOne({id: req.params.id}, (err, comment) => {
+      MovieComments.deleteOne({id: req.params.id})
+        .then((err, comment) => {
           res.json({result: 'ok'});
         })
-      }
-      else{
-        res.json({errors: "you are not able to delete this rating"});
-      }
+        .catch(err => {
+          console.error("Something went wrong", err);
+          res.json({message: "Something went wrong", error: err});
+        });
     }
     else
     {
