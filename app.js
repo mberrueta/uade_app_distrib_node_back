@@ -3,7 +3,7 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     cors = require('cors'),
     // db = require('./db'),
-    url_db = 'mongodb://127.0.0.1:27017/uade_app_distribuidas',
+    url_db = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/uade_app_distribuidas',
     mongoose = require('mongoose'),
     port = process.env.PORT || 9090;
 
