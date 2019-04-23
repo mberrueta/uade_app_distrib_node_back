@@ -5,12 +5,11 @@ var express = require('express'),
     JWT = require('jsonwebtoken');
     Users = require('../models/users');
 
-// Signin
+// Signing
 router.post('/signin', function(req, res) {
   Users
     .findOne({email: req.body.email}, (err, result) => {
-      Auth.hash_compare(req.body.pass, match => {
-        console.log("res:", result, "err:", err, "match:", match)
+      Auth.hash_compare(req.body.pass, result.digest, match => {
         if(result && match){
             let token = JWT.sign({user_id: result.id, email: result.email, user_name: result.name}, Key.tokenKey);
             res.status(200).json({user_id: result.id, email: result.email, user_name: result.name, token})
