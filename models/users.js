@@ -6,7 +6,8 @@ var UserSchema = new Schema({
   id: { type: String, default: uuid.v1 },
   email: { type: String, required: true, maxlength: 50 },
   digest: { type: String, required: true, maxlength: 60, minlength: 8 },
-  name: { type: String, required: true, maxlength: 50 }
+  name: { type: String, required: true, maxlength: 50 },
+  full_contact_data: {}
 })
 
 module.exports = mongoose.model('User', UserSchema)
