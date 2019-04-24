@@ -5,7 +5,7 @@ var User = require('../models/users')
 var Key = require('../key')
 
 module.exports.hash = (pass, callback) => {
-  bcrypt.hash(pass, Salt)
+  Bcrypt.hash(pass, Salt)
   .then((hashedPassword) => {
 
     console.log(hashedPassword)
@@ -16,7 +16,7 @@ module.exports.hash = (pass, callback) => {
 }
 
 module.exports.hash_compare = (pass, hash_to_compare, callback) => {
-  bcrypt.compare(pass, hash_to_compare, (err, result) => {
+  Bcrypt.compare(pass, hash_to_compare, (err, result) => {
     if (callback) {
       callback(result);
     }
