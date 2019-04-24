@@ -1,26 +1,25 @@
-var Bcrypt = require('bcrypt');
-var Salt = 10;
-var JWT = require('jsonwebtoken');
+var Bcrypt = require('bcrypt')
+var Salt = 10
+var JWT = require('jsonwebtoken')
 var User = require('../models/users')
 var Key = require('../key')
 
 module.exports.hash = (pass, callback) => {
   Bcrypt.hash(pass, Salt)
-  .then((hashedPassword) => {
-
-    console.log(hashedPassword)
-    if (callback) {
-      callback(hashedPassword);
-    }
-  });
+    .then((hashedPassword) => {
+      console.log(hashedPassword)
+      if (callback) {
+        callback(hashedPassword)
+      }
+    })
 }
 
-module.exports.hash_compare = (pass, hash_to_compare, callback) => {
-  Bcrypt.compare(pass, hash_to_compare, (err, result) => {
+module.exports.hash_compare = (pass, hashToCompare, callback) => {
+  Bcrypt.compare(pass, hashToCompare, (err, result) => {
     if (callback) {
-      callback(result);
+      callback(result)
     }
-  });
+  })
 }
 
 module.exports.jwt_user = (req, res, next) => {
@@ -29,16 +28,16 @@ module.exports.jwt_user = (req, res, next) => {
 
     JWT.verify(token, Key.tokenKey, function (err, payload) {
       if (payload) {
-        User.findOne({id: payload.user_id})
+        User.findOne({ id: payload.user_id })
           .then(user => {
-            req.user=user
+            req.user = user
             next()
           })
       } else {
         next()
       }
     })
-  } catch(e){
+  } catch (e) {
     next()
   }
 }
