@@ -20,7 +20,7 @@ router.get('/', function (req, res) {
 router.post('/', function (req, res) {
   Auth.hash(req.body.pass, hash => {
     var user = Users({
-      email: req.body.email,
+      email: req.body.email.toLowerCase(),
       digest: hash,
       name: req.body.name
     })
