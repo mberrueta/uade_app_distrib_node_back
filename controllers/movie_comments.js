@@ -1,6 +1,7 @@
 var express = require('express')
 var router = express.Router()
 var MovieComments = require('../models/movie_comments')
+var Users = require('../models/users')
 
 // List comments by movie
 router.get('/:imdb_id', function (req, res) {
@@ -8,8 +9,20 @@ router.get('/:imdb_id', function (req, res) {
   let userId = req.query.user_id
 
   Promise.all([
-    MovieComments.find({ imdb_id: req.params.imdb_id, user_id: userId }).sort('-date'),
-    MovieComments.find({ imdb_id: req.params.imdb_id, user_id: { '$ne': userId } }).sort('-date')
+    MovieComments.find({ imdb_id: req.params.imdb_id, user_id: userId })
+      .sort('-date')
+      .select({ __v: 0, _id: 0 })
+      .populate({
+        path: 'user',
+        select: { name: 1, id: 1, email: 1, _id: 0 }
+      }),
+    MovieComments.find({ imdb_id: req.params.imdb_id, user_id: { '$ne': userId } })
+      .sort('-date')
+      .select({ __v: 0, _id: 0 })
+      .populate({
+        path: 'user',
+        select: { name: 1, id: 1, email: 1, _id: 0 }
+      })
   ])
     .then(results => {
       const [myComments, allComments] = results
@@ -22,20 +35,26 @@ router.get('/:imdb_id', function (req, res) {
 
 // Create a New Movie Rating & Comment
 router.post('/', function (req, res) {
-  var comment = MovieComments({
-    user_id: req.body.user_id, // TODO: middleware
-    imdb_id: req.body.imdb_id,
-    comment: req.body.comment,
-    stars: req.body.stars
-  })
+  Users.findOne({ id: req.body.user_id }, (err, user) => {
+    if (user) {
+      var comment = MovieComments({
+        user: user, // TODO: middleware
+        imdb_id: req.body.imdb_id,
+        comment: req.body.comment,
+        stars: req.body.stars
+      })
 
-  comment.save()
-    .then(newComment => {
-      res.json({ comment: newComment })
-    })
-    .catch(err => {
-      res.json({ message: 'Something went wrong', error: err.message })
-    })
+      comment.save()
+        .then(newComment => {
+          res.json({ comment: newComment })
+        })
+        .catch(err => {
+          res.json({ message: 'Something went wrong', error: err.message })
+        })
+    } else {
+      res.json({ errors: 'user not found' })
+    }
+  })
 })
 
 // Update a rating & comment

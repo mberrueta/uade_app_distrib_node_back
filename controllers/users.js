@@ -7,7 +7,7 @@ var Users = require('../models/users')
 router.get('/', function (req, res) {
   // TODO: use middleware
 
-  Users.find().sort('name')
+  Users.find().sort('name').select({ __v: 0, _id: 0 })
     .then(result => {
       res.json({ users: result })
     })
