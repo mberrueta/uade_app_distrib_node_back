@@ -19,24 +19,28 @@ router.get('/', function (req, res) {
 
 // Create a New User
 router.post('/', function (req, res) {
-  Auth.hash(req.body.pass, hash => {
-    FullContact.get_fullcontact_info(req.body.email, fullContactData => {
-      var user = Users({
-        email: req.body.email.toLowerCase(),
-        digest: hash,
-        name: req.body.name,
-        full_contact_data: fullContactData
-      })
+  if (req.body.pass.length >= 8) {
+    Auth.hash(req.body.pass, hash => {
+      FullContact.get_fullcontact_info(req.body.email, fullContactData => {
+        var user = Users({
+          email: req.body.email.toLowerCase(),
+          digest: hash,
+          name: req.body.name,
+          full_contact_data: fullContactData
+        })
 
-      user.save()
-        .then(newUser => {
-          res.json({ user: newUser })
-        })
-        .catch(err => {
-          res.json({ message: 'Something went wrong', error: err.message })
-        })
+        user.save()
+          .then(newUser => {
+            res.json({ user: newUser })
+          })
+          .catch(err => {
+            res.json({ message: 'Something went wrong', error: err.message })
+          })
+      })
     })
-  })
+  } else {
+    res.json({ message: 'Password must be 8 characters or more' })
+  }
 })
 
 // Update a user
