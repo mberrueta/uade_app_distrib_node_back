@@ -1,4 +1,4 @@
-var key = process.env.FULLCONTACT_KEY || 'VYDfo4nVMPHXZVu9Zaf3ECJdGUMHoo67'
+var key = process.env.FULLCONTACT_KEY
 var fullcontact = require('contacts-api-node')({ apiKey: key })
 
 module.exports.get_fullcontact_info = (email, callback) => {
