@@ -5,6 +5,12 @@ var bodyParser = require('body-parser')
 var urlDB = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/uade_app_distribuidas'
 var mongoose = require('mongoose')
 var port = process.env.PORT || 9090
+var JWT = require('./helpers/hash')
+var LogMiddleware = require('./helpers/log')
+
+app.use(LogMiddleware.logger_middleware)
+// Auth middleware
+app.use(JWT.jwt_user)
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({

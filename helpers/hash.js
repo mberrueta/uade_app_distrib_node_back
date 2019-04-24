@@ -1,9 +1,11 @@
-var bcrypt = require('bcrypt'),
-    salt = 10;
-
+var Bcrypt = require('bcrypt');
+var Salt = 10;
+var JWT = require('jsonwebtoken');
+var User = require('../models/users')
+var Key = require('../key')
 
 module.exports.hash = (pass, callback) => {
-  bcrypt.hash(pass,salt)
+  bcrypt.hash(pass, Salt)
   .then((hashedPassword) => {
 
     console.log(hashedPassword)
@@ -19,4 +21,24 @@ module.exports.hash_compare = (pass, hash_to_compare, callback) => {
       callback(result);
     }
   });
+}
+
+module.exports.jwt_user = (req, res, next) => {
+  try {
+    const token = req.headers.authorization.replace('Bearer ', '')
+
+    JWT.verify(token, Key.tokenKey, function (err, payload) {
+      if (payload) {
+        User.findOne({id: payload.user_id})
+          .then(user => {
+            req.user=user
+            next()
+          })
+      } else {
+        next()
+      }
+    })
+  } catch(e){
+    next()
+  }
 }

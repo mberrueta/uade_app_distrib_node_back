@@ -5,8 +5,7 @@ var Users = require('../models/users')
 
 // List comments by movie
 router.get('/:imdb_id', function (req, res) {
-  // TODO: use middleware
-  let userId = req.query.user_id
+  let userId = req.user ? req.user.id : "00000000-0000-0000-0000-00000000"
 
   Promise.all([
     MovieComments.find({ imdb_id: req.params.imdb_id, user_id: userId })
