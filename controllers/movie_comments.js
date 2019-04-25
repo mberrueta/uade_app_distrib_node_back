@@ -21,7 +21,7 @@ router.get('/:imdb_id', function (req, res) {
       .select({ __v: 0, _id: 0 })
       .populate({
         path: 'user',
-        select: { name: 1, id: 1, email: 1, _id: 0 }
+        select: { __v: 0, _id: 0, digest: 0 }
       })
   ])
     .then(results => {
