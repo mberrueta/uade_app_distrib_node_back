@@ -1,6 +1,6 @@
-# UADE App Distribuidas BackEnd
+# UADE - Aplicaciones Distribuídas - BackEnd
 
-*This is the BackEnd of the application apdMovie10, where you can make comments about different movies and rank them.*
+*`This is the BackEnd of the application apdMovie10, where you can make comments about different movies and rank them.`*
 
 You have to register to make a comment and rank a movie, but you can list others reviews without registering (even though, if you do it, you´ll see your comments first).
 
@@ -12,7 +12,7 @@ To manage your account, you have a `token` given at your login that will only le
 
 Valid `comments` actions: 
 
-- *list* every comment about a particular movie (yours first)
+- *list* every comment about a particular movie (yours first),
 - *list* every own comment,
 - *create* a new comment,
 - *update* a particular own comment,
@@ -45,3 +45,36 @@ npm start
  > db.getCollectionNames()
  > db.users.insert({  user_name: 'admin', pass_digest: 'd033e22ae348aeb5660fc2140aec35850c4da997', mail: 'admin@app_distrib.com' })
  ```
+
+## Architecture
+
+This app use a *MVC* pattern.
+
+├── Procfile (Heroku run entry point)  
+├── app.js (main app)  
+├── bin  
+├── controllers 
+- auth.js (login manager) 
+- movie_comments.js (movie manager) 
+- users.js (users manager)  
+
+├── data  
+├── docker-compose.yml (MongoDB docker def)  
+├── helpers 
+- array.js (organize users) 
+- fullContact.js (bring extra data) 
+- hash.js (encrypt the password) 
+- log.js (console log)
+
+├── key.js (system keys only dev. prod use env *variables*)  
+├── models
+- movie_comments.js (movie model) 
+- users.js (users model)
+
+├── node_modules  
+├── package-lock.json  
+├── package.json  
+├── public  
+├── readme.md (*you are here*)  
+├── routes  
+└── views
