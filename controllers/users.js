@@ -43,12 +43,10 @@ router.post('/', function (req, res) {
 
 // Update a user, only signed user
 // TODO: actualizar una sola cosa
-// TODO: corregir!!!
 router.put('/:id', function (req, res) {
   if (req.user) {
     Users.findOne({ id: req.user.id }, (err, result) => {
       if (result) {
-
         Auth.hash(req.body.pass, hash => {
           Users.updateOne({ id: req.params.id }, {
             email: req.body.email,
@@ -58,11 +56,9 @@ router.put('/:id', function (req, res) {
             res.json({ result: 'ok' })
           })
             .catch(err => {
-              console.error('Something went wrong', err)
               res.json({ message: 'Something went wrong', error: err.message })
             })
-          })
-
+        })
       } else {
         res.json({ errors: 'user not found' })
       }
@@ -73,18 +69,21 @@ router.put('/:id', function (req, res) {
 })
 
 // Delete a user, only signed user
-// TODO: corregir!!!
+// TODO: no anda!!!
 router.delete('/:id', function (req, res) {
+  console.log(res)
   if (req.user) {
     Users.findOne({ id: req.user.id }, (err, result) => {
       if (result) {
-        Users.deleteOne({ id: req.params.id })
-          .then((err, status) => {
-            res.json({ result: 'ok' })
-          })
-          .catch(err => {
-            res.json({ message: 'Something went wrong', error: err })
-          })
+        Auth.hash(req.body.pass, hash => {
+          Users.deleteOne({ id: req.params.id })
+            .then((err, status) => {
+              res.json({ result: 'ok' })
+            })
+            .catch(err => {
+              res.json({ message: 'Something went wrong', error: err })
+            })
+        })
       } else {
         res.json({ errors: 'user not found' })
       }
