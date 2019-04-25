@@ -71,7 +71,7 @@ router.put('/:id', function (req, res) {
 // Delete a user, only signed user
 // TODO: no anda!!!
 router.delete('/:id', function (req, res) {
-  console.log(res)
+  console.log(req)
   if (req.user) {
     Users.findOne({ id: req.user.id }, (err, result) => {
       if (result) {
