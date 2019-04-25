@@ -48,17 +48,21 @@ router.put('/:id', function (req, res) {
   if (req.user) {
     Users.findOne({ id: req.user.id }, (err, result) => {
       if (result) {
-        Users.updateOne({ id: req.params.id }, {
-          email: req.body.email,
-          digest: req.body.digest,
-          name: req.body.name
-        }).then((err, status) => {
-          res.json({ result: 'ok' })
-        })
-          .catch(err => {
-            console.error('Something went wrong', err)
-            res.json({ message: 'Something went wrong', error: err.message })
+
+        Auth.hash(req.body.pass, hash => {
+          Users.updateOne({ id: req.params.id }, {
+            email: req.body.email,
+            digest: hash,
+            name: req.body.name
+          }).then((err, status) => {
+            res.json({ result: 'ok' })
           })
+            .catch(err => {
+              console.error('Something went wrong', err)
+              res.json({ message: 'Something went wrong', error: err.message })
+            })
+          })
+
       } else {
         res.json({ errors: 'user not found' })
       }
