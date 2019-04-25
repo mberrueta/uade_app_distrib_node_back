@@ -32,6 +32,22 @@ router.get('/:imdb_id', function (req, res) {
     })
 })
 
+// List my comments, only signed user
+// no anda!!!
+// TODO: para signed nomas (if)
+router.get('/', function (req, res) {
+  MovieComments.find({ user_id: req.user.id }) // ver si existe user_id??????????
+    .sort('-date')
+    .select({ __v: 0, _id: 0 })
+    .populate({
+      path: 'user',
+      select: { name: 1, id: 1, email: 1, _id: 0 }
+    })
+    .catch(err => {
+      res.json({ message: 'Something went wrong', error: err })
+    })
+})
+
 // Create a New Movie Rating & Comment, only signed user
 router.post('/', function (req, res) {
   if (req.user) {
@@ -84,6 +100,7 @@ router.put('/:id', function (req, res) {
 })
 
 // Delete a rating & comment, only signed user
+// TODO: si queres borrar el comentario de otro usuario, te dice q no encuentra el raiting
 router.delete('/:id', function (req, res) {
   if (req.user) {
     MovieComments.findOne({ id: req.params.id, user: req.user._id }, (err, result) => {
