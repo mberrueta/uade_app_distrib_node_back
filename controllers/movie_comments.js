@@ -36,21 +36,19 @@ router.get('/:imdb_id', function (req, res) {
 // List my comments, only signed user
 router.get('/', function (req, res) {
   if (req.user) {
-    MovieComments.find({ user: { _id: req.user._id } }) // ver si existe user_id??????????
+    MovieComments.find({ user: { _id: req.user._id } })
       .sort('imdb_title')
       .select({ __v: 0, _id: 0 })
       .then(results => {
-        list = Arrays.groupBy(results, 'imdb_title')
+        let list = Arrays.groupBy(results, 'imdb_title')
         res.json({ comments: list })
       })
       .catch(err => {
         res.json({ message: 'Something went wrong', error: err })
       })
-    }
-    else
-    {
-      res.json({ errors: 'please sing in' })
-    }
+  } else {
+    res.json({ errors: 'please sing in' })
+  }
 })
 
 // Create a New Movie Rating & Comment, only signed user
@@ -106,7 +104,6 @@ router.put('/:id', function (req, res) {
 })
 
 // Delete a rating & comment, only signed user
-// TODO: si queres borrar el comentario de otro usuario, te dice q no encuentra el raiting
 router.delete('/:id', function (req, res) {
   if (req.user) {
     MovieComments.findOne({ id: req.params.id, user: req.user._id }, (err, result) => {
