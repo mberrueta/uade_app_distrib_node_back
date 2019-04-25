@@ -47,7 +47,7 @@ router.get('/', function (req, res) {
         res.json({ message: 'Something went wrong', error: err })
       })
   } else {
-    res.json({ errors: 'please sing in' })
+    res.json({ errors: 'please signin' })
   }
 })
 
@@ -76,7 +76,7 @@ router.post('/', function (req, res) {
       }
     })
   } else {
-    res.json({ errors: 'please sing in' })
+    res.json({ errors: 'please signin' })
   }
 })
 
@@ -99,7 +99,7 @@ router.put('/:id', function (req, res) {
       }
     })
   } else {
-    res.json({ errors: 'please sing in' })
+    res.json({ errors: 'please signin' })
   }
 })
 
@@ -120,7 +120,7 @@ router.delete('/:id', function (req, res) {
       }
     })
   } else {
-    res.json({ errors: 'please sing in' })
+    res.json({ errors: 'please signin' })
   }
 })
 

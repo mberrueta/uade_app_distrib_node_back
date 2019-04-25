@@ -61,7 +61,7 @@ router.put('/', function (req, res) {
       }
     })
   } else {
-    res.json({ errors: 'please sing in' })
+    res.json({ errors: 'please sign in' })
   }
 })
 
@@ -82,7 +82,7 @@ router.delete('/', function (req, res) {
       }
     })
   } else {
-    res.json({ errors: 'please sing in' })
+    res.json({ errors: 'please sign in' })
   }
 })
 
