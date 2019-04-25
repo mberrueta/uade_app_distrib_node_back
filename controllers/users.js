@@ -8,10 +8,10 @@ var FullContact = require('../helpers/fullContact')
 router.get('/', function (req, res) {
   Users.find().sort('name').select({ __v: 0, _id: 0 })
     .then(result => {
-      res.json({ users: result })
+      res.status(200).json({ users: result })
     })
     .catch(err => {
-      res.json({ message: 'Something went wrong', error: err })
+      res.status(500).json({ message: 'Something went wrong', error: err })
     })
 })
 
@@ -29,10 +29,10 @@ router.post('/', function (req, res) {
 
         user.save()
           .then(newUser => {
-            res.json({ user: newUser })
+            res.status(200).json({ user: newUser })
           })
           .catch(err => {
-            res.json({ message: 'Something went wrong', error: err.message })
+            res.status(500).json({ message: 'Something went wrong', error: err.message })
           })
       })
     })
@@ -50,18 +50,18 @@ router.put('/', function (req, res) {
           Users.updateOne({ id: req.user.id }, {
             digest: hash
           }).then((err, status) => {
-            res.json({ result: 'ok' })
+            res.status(200).json({ result: 'ok' })
           })
             .catch(err => {
-              res.json({ message: 'Something went wrong', error: err.message })
+              res.status(500).json({ message: 'Something went wrong', error: err.message })
             })
         })
       } else {
-        res.json({ errors: 'user not found' })
+        res.status(404).json({ errors: 'user not found' })
       }
     })
   } else {
-    res.json({ errors: 'please sign in' })
+    res.status(403).json({ errors: 'please sign in' })
   }
 })
 
@@ -72,17 +72,17 @@ router.delete('/', function (req, res) {
       if (result) {
         Users.deleteOne({ id: req.user.id })
           .then((err, status) => {
-            res.json({ result: 'ok' })
+            res.status(200).json({ result: 'ok' })
           })
           .catch(err => {
-            res.json({ message: 'Something went wrong', error: err })
+            res.status(500).json({ message: 'Something went wrong', error: err })
           })
       } else {
-        res.json({ errors: 'user not found' })
+        res.status(404).json({ errors: 'user not found' })
       }
     })
   } else {
-    res.json({ errors: 'please sign in' })
+    res.status(403).json({ errors: 'please sign in' })
   }
 })
 

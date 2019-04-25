@@ -29,7 +29,7 @@ router.get('/:imdb_id', function (req, res) {
       res.json({ comments: myComments.concat(allComments) })
     })
     .catch(err => {
-      res.json({ message: 'Something went wrong', error: err })
+      res.status(500).json({ message: 'Something went wrong', error: err })
     })
 })
 
@@ -44,10 +44,10 @@ router.get('/', function (req, res) {
         res.json({ comments: list })
       })
       .catch(err => {
-        res.json({ message: 'Something went wrong', error: err })
+        res.status(500).json({ message: 'Something went wrong', error: err })
       })
   } else {
-    res.json({ errors: 'please signin' })
+    res.status(403).json({ errors: 'please signin' })
   }
 })
 
@@ -66,17 +66,17 @@ router.post('/', function (req, res) {
 
         comment.save()
           .then(newComment => {
-            res.json({ comment: newComment })
+            res.status(200).json({ comment: newComment })
           })
           .catch(err => {
-            res.json({ message: 'Something went wrong', error: err.message })
+            res.status(500).json({ message: 'Something went wrong', error: err.message })
           })
       } else {
-        res.json({ errors: 'user not found' })
+        res.status(404).json({ errors: 'user not found' })
       }
     })
   } else {
-    res.json({ errors: 'please signin' })
+    res.status(403).json({ errors: 'please signin' })
   }
 })
 
@@ -89,17 +89,17 @@ router.put('/:id', function (req, res) {
           comment: req.body.comment,
           stars: req.body.stars
         }).then((err, comment) => {
-          res.json({ result: 'ok' })
+          res.status(200).json({ result: 'ok' })
         })
           .catch(err => {
-            res.json({ message: 'Something went wrong', error: err.message })
+            res.status(500).json({ message: 'Something went wrong', error: err.message })
           })
       } else {
         res.json({ errors: 'rating not found' })
       }
     })
   } else {
-    res.json({ errors: 'please signin' })
+    res.status(403).json({ errors: 'please signin' })
   }
 })
 
@@ -110,17 +110,17 @@ router.delete('/:id', function (req, res) {
       if (result) {
         MovieComments.deleteOne({ id: req.params.id })
           .then((err, comment) => {
-            res.json({ result: 'ok' })
+            res.status(200).json({ result: 'ok' })
           })
           .catch(err => {
-            res.json({ message: 'Something went wrong', error: err })
+            res.status(500).json({ message: 'Something went wrong', error: err })
           })
       } else {
         res.json({ errors: 'rating not found' })
       }
     })
   } else {
-    res.json({ errors: 'please signin' })
+    res.status(403).json({ errors: 'please signin' })
   }
 })
 
