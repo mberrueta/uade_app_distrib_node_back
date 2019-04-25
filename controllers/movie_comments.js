@@ -2,6 +2,7 @@ var express = require('express')
 var router = express.Router()
 var MovieComments = require('../models/movie_comments')
 var Users = require('../models/users')
+var Arrays = require('../helpers/array')
 
 // List comments by movie, allow unsigned user
 router.get('/:imdb_id', function (req, res) {
@@ -33,19 +34,23 @@ router.get('/:imdb_id', function (req, res) {
 })
 
 // List my comments, only signed user
-// no anda!!!
-// TODO: para signed nomas (if)
 router.get('/', function (req, res) {
-  MovieComments.find({ user_id: req.user.id }) // ver si existe user_id??????????
-    .sort('-date')
-    .select({ __v: 0, _id: 0 })
-    .populate({
-      path: 'user',
-      select: { name: 1, id: 1, email: 1, _id: 0 }
-    })
-    .catch(err => {
-      res.json({ message: 'Something went wrong', error: err })
-    })
+  if (req.user) {
+    MovieComments.find({ user: { _id: req.user._id } }) // ver si existe user_id??????????
+      .sort('imdb_title')
+      .select({ __v: 0, _id: 0 })
+      .then(results => {
+        list = Arrays.groupBy(results, 'imdb_title')
+        res.json({ comments: list })
+      })
+      .catch(err => {
+        res.json({ message: 'Something went wrong', error: err })
+      })
+    }
+    else
+    {
+      res.json({ errors: 'please sing in' })
+    }
 })
 
 // Create a New Movie Rating & Comment, only signed user
@@ -56,6 +61,7 @@ router.post('/', function (req, res) {
         var comment = MovieComments({
           user: user,
           imdb_id: req.body.imdb_id,
+          imdb_title: req.body.imdb_title,
           comment: req.body.comment,
           stars: req.body.stars
         })
