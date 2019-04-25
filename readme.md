@@ -26,14 +26,14 @@ Valid `users` actions:
 - *delete* your own user.
 
 
-## Install
+## `Install`
 
 ```sh
 npm install
 npm start
 ```
 
-## Db
+## `Db`
 
  ```sh
  docker compose -up
@@ -46,7 +46,7 @@ npm start
  > db.users.insert({  user_name: 'admin', pass_digest: 'd033e22ae348aeb5660fc2140aec35850c4da997', mail: 'admin@app_distrib.com' })
  ```
 
-## Architecture
+## `Architecture`
 
 This app use a *MVC* pattern.
 
@@ -78,3 +78,10 @@ This app use a *MVC* pattern.
 ├── readme.md (*you are here*)  
 ├── routes  
 └── views
+
+## `Response Status Code`
+
+- `200`: OK
+- `500`: Error
+- `404`: Not Found
+- `403`: Authentication Error

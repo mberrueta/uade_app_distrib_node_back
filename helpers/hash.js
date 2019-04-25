@@ -7,7 +7,6 @@ var Key = require('../key')
 module.exports.hash = (pass, callback) => {
   Bcrypt.hash(pass, Salt)
     .then((hashedPassword) => {
-      console.log(hashedPassword)
       if (callback) {
         callback(hashedPassword)
       }
