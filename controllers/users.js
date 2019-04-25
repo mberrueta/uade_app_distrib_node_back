@@ -42,16 +42,13 @@ router.post('/', function (req, res) {
 })
 
 // Update a user, only signed user
-// TODO: actualizar una sola cosa
-router.put('/:id', function (req, res) {
+router.put('/', function (req, res) {
   if (req.user) {
     Users.findOne({ id: req.user.id }, (err, result) => {
       if (result) {
         Auth.hash(req.body.pass, hash => {
-          Users.updateOne({ id: req.params.id }, {
-            email: req.body.email,
-            digest: hash,
-            name: req.body.name
+          Users.updateOne({ id: req.user.id }, {
+            digest: hash
           }).then((err, status) => {
             res.json({ result: 'ok' })
           })
@@ -70,20 +67,17 @@ router.put('/:id', function (req, res) {
 
 // Delete a user, only signed user
 // TODO: no anda!!!
-router.delete('/:id', function (req, res) {
-  console.log(req)
+router.delete('/', function (req, res) {
   if (req.user) {
     Users.findOne({ id: req.user.id }, (err, result) => {
       if (result) {
-        Auth.hash(req.body.pass, hash => {
-          Users.deleteOne({ id: req.params.id })
-            .then((err, status) => {
-              res.json({ result: 'ok' })
-            })
-            .catch(err => {
-              res.json({ message: 'Something went wrong', error: err })
-            })
-        })
+        Users.deleteOne({ id: req.user.id })
+          .then((err, status) => {
+            res.json({ result: 'ok' })
+          })
+          .catch(err => {
+            res.json({ message: 'Something went wrong', error: err })
+          })
       } else {
         res.json({ errors: 'user not found' })
       }
