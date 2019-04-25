@@ -8,7 +8,7 @@ var Users = require('../models/users')
 // Signing
 router.post('/signin', function (req, res) {
   Users
-    .findOne({ email: req.body.email.toLowerCase() }, (err, result) => {
+    .findOne({ email: req.body.email.toLowerCase().trim() }, (err, result) => {
       if (result) {
         Auth.hash_compare(req.body.pass, result.digest, match => {
           if (match) {

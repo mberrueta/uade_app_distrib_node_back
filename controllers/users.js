@@ -21,7 +21,7 @@ router.post('/', function (req, res) {
     Auth.hash(req.body.pass, hash => {
       FullContact.get_fullcontact_info(req.body.email, fullContactData => {
         var user = Users({
-          email: req.body.email.toLowerCase(),
+          email: req.body.email.toLowerCase().trim(),
           digest: hash,
           name: req.body.name,
           full_contact_data: fullContactData
