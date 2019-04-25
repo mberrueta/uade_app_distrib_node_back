@@ -2,7 +2,6 @@ require('dotenv').config()
 var express = require('express')
 var app = express()
 var bodyParser = require('body-parser')
-// var cors = require('cors')
 var urlDB = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/uade_app_distribuidas'
 var mongoose = require('mongoose')
 var port = process.env.PORT || 9090
